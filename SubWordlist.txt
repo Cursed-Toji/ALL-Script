@@ -1,0 +1,13 @@
+www
+mail
+blog
+shop
+forum
+secure
+app
+api
+cdn
+dev
+stage
+demo
+ftp
