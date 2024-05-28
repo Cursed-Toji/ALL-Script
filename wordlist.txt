@@ -1,0 +1,14 @@
+images
+css
+LC_MESSAGES
+js
+tmpl
+lang
+default
+README
+templates
+langs
+config
+GNUmakefile
+themes
+en
