@@ -1,10 +1,12 @@
 import sys
+import re
+
 import requests
 from bs4 import BeautifulSoup
-import argparse
 
 TO_CRAWL = []
 CRAWLED = set()
+EMAILS = []
 
 
 def request(url):
@@ -33,6 +35,11 @@ def get_links(html):
         pass
 
 
+def get_emails(html):
+    emails = re.findall(r"\w[\w\.]+\w@\w[\w\.]+\w", html)
+    return emails
+
+
 def crawl():
     while 1:
         if TO_CRAWL:
@@ -46,7 +53,11 @@ def crawl():
                         if link not in CRAWLED and link not in TO_CRAWL:
                             TO_CRAWL.append(link)
 
-                print("Crawling {}".format(url))
+                emails = get_emails(html)
+                for email in emails:
+                    if email not in EMAILS:
+                        print(email)
+                        EMAILS.append(email)
 
                 CRAWLED.add(url)
             else:
@@ -56,28 +67,7 @@ def crawl():
             break
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Brute force directories or subdomains and crawl the website.")
-    parser.add_argument("-d", "--directories", action="store_true", help="Brute force directories")
-    parser.add_argument("-s", "--subdomains", action="store_true", help="Brute force subdomains")
-    parser.add_argument("-c", "--crawl", action="store_true", help="Crawl the website")
-    parser.add_argument("target", help="Target URL or domain")
-    parser.add_argument("wordlist", nargs="?", help="Wordlist file")
-
-    args = parser.parse_args()
-
-    if args.crawl:
-        TO_CRAWL.append(args.target)
-        crawl()
-    elif not args.wordlist:
-        print("Please specify the wordlist.")
-        parser.print_help()
-        sys.exit(1)
-    elif args.directories:
-        brute_directories(args.target, args.wordlist)
-    elif args.subdomains:
-        brute_subdomains(args.target, args.wordlist)
-
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    url = sys.argv[1]
+    TO_CRAWL.append(url)
+    crawl()
